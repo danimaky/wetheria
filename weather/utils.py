@@ -1,4 +1,5 @@
 from wetheria.settings import WEATHER_API_URL, WEATHER_API_TOKEN
+import unicodedata
 import time
 import requests
 import datetime
@@ -37,9 +38,11 @@ def clean_weather_api_response(raw_data: dict = dict()):
     if raw_data['cod'] == 200:
         temperature = raw_data['main']['temp']
         temperature = int(temperature - 273.15)
+        normalized_city = unicodedata.normalize('NFKD', raw_data.get('name', 'N/A')).encode('ascii', 'ignore')
+        normalized_city = str(normalized_city).replace("b'", "").replace("'","")
         cleaned_data = {
-            "location_name": f"{raw_data.get('name', 'N/A')}, {raw_data.get('sys', {}).get('country')}",
-            "temperature": f"{temperature} °C",
+            "location_name": f"{normalized_city}, {raw_data.get('sys', {}).get('country')}",
+            "temperature": f"{temperature} C",
             "wind": raw_data["wind"],
             "cloudines": raw_data["weather"][0]["description"].capitalize(),
             "presure": f"{raw_data['main']['pressure']} hpa",

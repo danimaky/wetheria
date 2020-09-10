@@ -43,8 +43,8 @@ INFORMATION = {
 }
 
 EXPECTED_OUTPUT = {
-        "location_name": "Bogotá, CO",
-        "temperature": "10 °C",
+        "location_name": "Bogota, CO",
+        "temperature": "10 C",
         "wind": {'deg': 0, 'speed': 1},
         "cloudines": "Scattered clouds",
         "presure": "1027 hpa",
