@@ -3,3 +3,5 @@
 # Pytest-Flask
 pytest-flask==1.0.0
 
+# Freezegun to Test Datetime.now
+freezegun==1.0.0
