@@ -8,6 +8,7 @@ class WeatherApiView(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
 
+    @cache.cached(timeout=120, query_string=True)
     def get(self):
         fields = [
             {
