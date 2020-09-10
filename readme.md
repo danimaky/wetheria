@@ -46,4 +46,4 @@ A Flask Application to fetch weather information from External API
 
 4. Run the command "flask run" in order to make available flask service
 
-​5. Enjoy it!
+5. Enjoy it!
