@@ -7,7 +7,7 @@ from time import sleep
 def test_weather_api_malformed_request(client, ):
     """
     Testing endpoint validation to malformed requests
-    :param client: Fixture for flask App instance
+    :param client: Fixture for a client to fake flask App instance
     :return:
     """
     assert client.get("/weather").status_code == 400
@@ -24,7 +24,7 @@ def test_weather_api_correct_request(mock_get, client):
     """
     Testing endpoint response for success case
     :param mock_get: Mock for get function
-    :param client: Fixture for flask App instance
+    :param client: Fixture for a client to fake flask App instance
     :return:
     """
     mock_get.return_value.status_code = 200
@@ -39,7 +39,7 @@ def test_weather_api_cached_request(mock_get, client):
     """
     Testing endpoint cache functionality
     :param mock_get: Mock for get function
-    :param client: Fixture for flask App instance
+    :param client: Fixture for a client to fake flask App instance
     :return:
     """
     mock_get.return_value.status_code = 200
