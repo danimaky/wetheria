@@ -5,6 +5,13 @@ import datetime
 
 
 def fetch_information_from_weather_api(city: str, country_code: str, retry: int = 1):
+    """
+    Function to fetch information from Weather API in base of an specific query
+    :param city: Name of city to look up
+    :param country_code: Country code to look up, this should be a two characters string
+    :param retry: Number of retry, this is used for fetching retries.
+    :return: Dict Structure obtained from endpoint
+    """
     params = {
         "q": f"{city},{country_code}",
         "appid": WEATHER_API_TOKEN
@@ -21,6 +28,11 @@ def fetch_information_from_weather_api(city: str, country_code: str, retry: int 
 
 
 def clean_weather_api_response(raw_data: dict = dict()):
+    """
+    Function to clean raw data obtained from API endpoint.
+    :param raw_data: A dictionary structure
+    :return: It's a dictionary human-readable
+    """
     cleaned_data = {}
     if raw_data['cod'] == 200:
         temperature = raw_data['main']['temp']

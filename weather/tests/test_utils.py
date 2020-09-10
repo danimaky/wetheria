@@ -3,63 +3,76 @@ from weather.utils import fetch_information_from_weather_api, clean_weather_api_
 from requests.exceptions import RequestException
 from freezegun import freeze_time
 
+INFORMATION = {
+    "coord": {
+        "lon": -74.08,
+        "lat": 4.61
+    },
+    "weather": [
+        {
+            "id": 802,
+            "main": "Clouds",
+            "description": "scattered clouds",
+            "icon": "03n"
+        }
+    ],
+    "base": "stations",
+    "main": {
+        "temp": 283.15,
+        "feels_like": 282.21,
+        "temp_min": 283.15,
+        "temp_max": 283.15,
+        "pressure": 1027,
+        "humidity": 93
+    },
+    "visibility": 10000,
+    "wind": {
+        "speed": 1,
+        "deg": 0
+    },
+    "clouds": {
+        "all": 40
+    },
+    "dt": 1599619177,
+    "sys": {
+        "type": 1,
+        "id": 8582,
+        "country": "CO",
+        "sunrise": 1599562134,
+        "sunset": 1599605947
+    },
+    "timezone": -18000,
+    "id": 3688689,
+    "name": "Bogotá",
+    "cod": 200
+}
+
 
 @patch("weather.utils.requests.get")
 def test_fetch_information_from_weather_api_ok_response(mock_get):
-    information = {
-        "coord": {
-            "lon": -74.08,
-            "lat": 4.61
-        },
-        "weather": [
-            {
-                "id": 802,
-                "main": "Clouds",
-                "description": "scattered clouds",
-                "icon": "03n"
-            }
-        ],
-        "base": "stations",
-        "main": {
-            "temp": 283.15,
-            "feels_like": 282.21,
-            "temp_min": 283.15,
-            "temp_max": 283.15,
-            "pressure": 1027,
-            "humidity": 93
-        },
-        "visibility": 10000,
-        "wind": {
-            "speed": 1,
-            "deg": 0
-        },
-        "clouds": {
-            "all": 40
-        },
-        "dt": 1599619177,
-        "sys": {
-            "type": 1,
-            "id": 8582,
-            "country": "CO",
-            "sunrise": 1599562134,
-            "sunset": 1599605947
-        },
-        "timezone": -18000,
-        "id": 3688689,
-        "name": "Bogotá",
-        "cod": 200
-    }
+    """
+    Testing function to get data from API endpoint in case of a good response
+    :param mock_get: Mock for get function
+    :return:
+    """
     mock_get.return_value.status_code = 200
-    mock_get.return_value.json = lambda: information
+    mock_get.return_value.json = lambda: INFORMATION
     response = fetch_information_from_weather_api("Bogota", "co")
     assert mock_get.called
     assert mock_get.call_count == 1
-    assert response == information
+    assert response == INFORMATION
 
 
 @patch("weather.utils.requests.get")
 @patch("weather.utils.time.sleep")
 def test_fetch_information_from_weather_api_connection_error_retry(mock_sleep, mock_get):
+    """
+    Testing function to get data from API endpoint in wrong response like timout
+    we should do 3 retry
+    :param mock_sleep: Mock for sleep function to avoid waits during testing process
+    :param mock_get: Mock for get function
+    :return:
+    """
     exception_raised = False
     try:
         mock_get.side_effect = RequestException()
@@ -76,49 +89,11 @@ def test_fetch_information_from_weather_api_connection_error_retry(mock_sleep, m
 @freeze_time("2020-09-09 03:57:00", -5)
 @patch("weather.utils.requests.get")
 def test_clean_weather_api_response_ok(mock_get):
-    information = {
-        "coord": {
-            "lon": -74.08,
-            "lat": 4.61
-        },
-        "weather": [
-            {
-                "id": 802,
-                "main": "Clouds",
-                "description": "scattered clouds",
-                "icon": "03n"
-            }
-        ],
-        "base": "stations",
-        "main": {
-            "temp": 283.15,
-            "feels_like": 282.21,
-            "temp_min": 283.15,
-            "temp_max": 283.15,
-            "pressure": 1027,
-            "humidity": 93
-        },
-        "visibility": 10000,
-        "wind": {
-            "speed": 1,
-            "deg": 0
-        },
-        "clouds": {
-            "all": 40
-        },
-        "dt": 1599619177,
-        "sys": {
-            "type": 1,
-            "id": 8582,
-            "country": "CO",
-            "sunrise": 1599562134,
-            "sunset": 1599605947
-        },
-        "timezone": -18000,
-        "id": 3688689,
-        "name": "Bogotá",
-        "cod": 200
-    }
+    """
+    Testing function to clean raw data and validate the correct structure of it
+    :param mock_get: Mock for get function
+    :return:
+    """
     expected_output = {
         "location_name": "Bogotá, CO",
         "temperature": "10 °C",
@@ -132,7 +107,7 @@ def test_clean_weather_api_response_ok(mock_get):
         "requested_time": "2020-09-08 22:57:00"
     }
     mock_get.return_value.status_code = 200
-    mock_get.return_value.json = lambda: information
+    mock_get.return_value.json = lambda: INFORMATION
     response = fetch_information_from_weather_api("Bogota", "co")
     cleaned_data = clean_weather_api_response(response)
     assert cleaned_data == expected_output
@@ -140,6 +115,12 @@ def test_clean_weather_api_response_ok(mock_get):
 
 @patch("weather.utils.requests.get")
 def test_clean_weather_api_response_not_found(mock_get):
+    """
+    Testing function to clean raw data, in case of a wrong response we are going to reply
+    same message to end user
+    :param mock_get: Mock for get function
+    :return:
+    """
     information = {"cod": "404", "message": "city not found"}
     mock_get.return_value.status_code = 404
     mock_get.return_value.json = lambda: information
