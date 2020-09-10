@@ -1,0 +1,1 @@
+from weather.resources import *
