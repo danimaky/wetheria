@@ -1,5 +1,5 @@
 from unittest.mock import patch
-from weather.utils import fetch_information_from_weather_api, clean_weather_api_response
+from weather.utils import fetch_information_from_weather_api, clean_weather_api_response, validate_country
 from requests.exceptions import RequestException
 from freezegun import freeze_time
 from weather.tests.constants import INFORMATION, EXPECTED_OUTPUT
@@ -73,3 +73,27 @@ def test_clean_weather_api_response_not_found(mock_get):
     expected_output = {"message": "city not found"}
     cleaned_data = clean_weather_api_response(response)
     assert cleaned_data == expected_output
+
+
+def test_validate_country_code():
+    # In case of a country code with number
+    exception_raised = False
+    try:
+        validate_country("c1")
+    except ValueError:
+        exception_raised = True
+    assert exception_raised
+    # In case of a country code with more or less than 2 characters
+    exception_raised = False
+    try:
+        validate_country("col")
+    except ValueError:
+        exception_raised = True
+    assert exception_raised
+    # A valid case to handle
+    exception_raised = False
+    try:
+        validate_country("co")
+    except ValueError:
+        exception_raised = True
+    assert not exception_raised

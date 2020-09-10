@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse
+from flask import make_response
 from wetheria.extensions import api, cache
-from weather.utils import fetch_information_from_weather_api, clean_weather_api_response
-import re
+from weather.utils import fetch_information_from_weather_api, clean_weather_api_response, validate_country
 
 
 class WeatherApiView(Resource):
@@ -23,27 +23,21 @@ class WeatherApiView(Resource):
                 "location": "values",
                 "required": True,
                 "default": "",
-                "type": str,
+                "type": validate_country,
             },
         ]
         [self.parser.add_argument(**x) for x in fields]
         args = self.parser.parse_args()
-        if not len(args.get('country', '')) == 2 or re.search(r"\W|\d+", args.get('country', '')):
-            return {
-                "message": {
-                    "country": "Country code must be an string composed by 2 character in lowercase"
-                }
-            }, 400
         raw_data = fetch_information_from_weather_api(city=args['city'], country_code=args['country'])
         cleaned_data = clean_weather_api_response(raw_data=raw_data)
-        return cleaned_data
+        return cleaned_data, raw_data['cod']
 
 
 class ErrorApiView(Resource):
 
     def get(self):
         value = "a" + 1
-        return {}
+        return make_response({}, 200)
 
 
 api.add_resource(WeatherApiView, "/weather")

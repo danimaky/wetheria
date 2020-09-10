@@ -3,6 +3,7 @@ import unicodedata
 import time
 import requests
 import datetime
+import re
 
 
 def fetch_information_from_weather_api(city: str, country_code: str, retry: int = 1):
@@ -55,3 +56,9 @@ def clean_weather_api_response(raw_data: dict = dict()):
     else:
         cleaned_data['message'] = raw_data['message']
     return cleaned_data
+
+
+def validate_country(value: str):
+    if not len(value) == 2 or re.search(r"\W|\d+", value):
+        raise ValueError('Country code must be an string composed by 2 character in lowercase')
+    return value
