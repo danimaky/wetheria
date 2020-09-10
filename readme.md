@@ -1,5 +1,36 @@
 # Wetheria
 A Flask Application to fetch weather information from External API
+
+## Project Folders Structure
+```
+├───requirements
+│       base.txt
+│       develop.txt
+│       production.txt
+│
+├───weather
+│   │   constants.py
+│   │   resources.py
+│   │   utils.py
+│   │
+│   ├───tests
+│   │   │   constants.py
+│   │   │   test_resources.py
+│   │   │   test_utils.py
+│   │   │
+│   │   └───__init__.py
+│   └───__init__.py
+├───wetheria
+│   │   app.py
+│   │   extensions.py
+│   │   handlers.py
+│   │   middlewares.py
+│   │   settings.py
+│   │   settings_local_example.py
+│   │
+│   └───__init__.py
+```
+
 ## System Configuration
 
 ###  For local configuration
