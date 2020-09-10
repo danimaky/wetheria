@@ -39,4 +39,12 @@ class WeatherApiView(Resource):
         return cleaned_data
 
 
+class ErrorApiView(Resource):
+
+    def get(self):
+        value = "a" + 1
+        return {}
+
+
 api.add_resource(WeatherApiView, "/weather")
+api.add_resource(ErrorApiView, "/500")
