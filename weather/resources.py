@@ -31,7 +31,7 @@ class WeatherApiView(Resource):
         if not len(args.get('country', '')) == 2 or re.search(r"\W|\d+", args.get('country', '')):
             return {
                 "message": {
-                    "country": "Country code should be an string composed by 2 character in lowercase"
+                    "country": "Country code must be an string composed by 2 character in lowercase"
                 }
             }, 400
         raw_data = fetch_information_from_weather_api(city=args['city'], country_code=args['country'])
